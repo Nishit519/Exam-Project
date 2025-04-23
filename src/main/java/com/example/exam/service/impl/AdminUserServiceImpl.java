@@ -225,22 +225,26 @@ public class AdminUserServiceImpl implements AdminUserService{
 		
 	    Page<AdminUser> pageOfEntities = db.findByRole(Role.USER, pageable);
 
-	    // Convert each AdminUser to AdminUserProxy, including loading bytes
+	    
 	    List<AdminUserProxy> proxyList = pageOfEntities.stream()
 	      .map(entity -> {
+	    	  
 	        AdminUserProxy proxy = mapper.entityToProxy(entity);
 	        File profileImageFile = new File("src/main/resources/static/profile_images/" 
 	                                          + entity.getProfileImage());
+	        
+	        System.err.println(entity.getProfileImage());
+	        
 	        try {
 	          proxy.setProfileImage(Files.readAllBytes(profileImageFile.toPath()));
 	        } catch (IOException e) {
-	          // optional: log warning
+	          
 	        }
 	        return proxy;
 	      })
 	      .collect(Collectors.toList());
 
-	    // Wrap back into a Page<AdminUserProxy>, preserving paging metadata
+	    
 	    return new PageImpl<>(
 	      proxyList,
 	      pageable,
