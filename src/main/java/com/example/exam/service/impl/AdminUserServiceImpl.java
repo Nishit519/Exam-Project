@@ -221,36 +221,31 @@ public class AdminUserServiceImpl implements AdminUserService{
 
 	
 	@Override
-	  public Page<AdminUserProxy> getAllUsers(Pageable pageable) {
-		
-	    Page<AdminUser> pageOfEntities = db.findByRole(Role.USER, pageable);
+	public Page<AdminUserProxy> getAllUsers(Pageable pageable, String search) {
+	  Page<AdminUser> pageOfEntities;
 
-	    
-	    List<AdminUserProxy> proxyList = pageOfEntities.stream()
-	      .map(entity -> {
-	    	  
-	        AdminUserProxy proxy = mapper.entityToProxy(entity);
-	        File profileImageFile = new File("src/main/resources/static/profile_images/" 
-	                                          + entity.getProfileImage());
-	        
-	        System.err.println(entity.getProfileImage());
-	        
-	        try {
-	          proxy.setProfileImage(Files.readAllBytes(profileImageFile.toPath()));
-	        } catch (IOException e) {
-	          
-	        }
-	        return proxy;
-	      })
-	      .collect(Collectors.toList());
-
-	    
-	    return new PageImpl<>(
-	      proxyList,
-	      pageable,
-	      pageOfEntities.getTotalElements()
-	    );
+	  if (search == null || search.trim().isEmpty()) {
+	    pageOfEntities = db.findByRole(Role.USER, pageable);
+	  } else {
+	    pageOfEntities = db.findByRoleAndSearch(Role.USER, search, pageable);
 	  }
+
+	  List<AdminUserProxy> proxyList = pageOfEntities.stream()
+	    .map(entity -> {
+	      AdminUserProxy proxy = mapper.entityToProxy(entity);
+	      File profileImageFile = new File("src/main/resources/static/profile_images/"
+	                                       + entity.getProfileImage());
+	      try {
+	        proxy.setProfileImage(Files.readAllBytes(profileImageFile.toPath()));
+	      } catch (IOException e) {
+	        // log error if needed
+	      }
+	      return proxy;
+	    })
+	    .collect(Collectors.toList());
+
+	  return new PageImpl<>(proxyList, pageable, pageOfEntities.getTotalElements());
+	}
 	
 	
 	

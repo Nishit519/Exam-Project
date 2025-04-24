@@ -21,6 +21,6 @@ public interface AdminUserService {
 	public List<AdminUserProxy> getAllUsersWithName(String name);
 	public Boolean addDummyData(Integer count);
 	public Boolean deleteUser(Long id);
-	Page<AdminUserProxy> getAllUsers(Pageable pageable);
+	Page<AdminUserProxy> getAllUsers(Pageable pageable, String search);
 	
 }
