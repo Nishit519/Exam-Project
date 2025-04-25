@@ -30,6 +30,7 @@ import com.example.exam.exception.GlobalException;
 import com.example.exam.proxy.AdminUserProxy;
 import com.example.exam.repo.AdminUserRepo;
 import com.example.exam.service.AdminUserService;
+import com.example.exam.utils.ExcelHelper;
 import com.example.exam.utils.JwtUtils;
 import com.example.exam.utils.Mapper;
 import com.github.javafaker.Faker;
@@ -245,6 +246,16 @@ public class AdminUserServiceImpl implements AdminUserService{
 	    .collect(Collectors.toList());
 
 	  return new PageImpl<>(proxyList, pageable, pageOfEntities.getTotalElements());
+	}
+
+	@Override
+	public byte[] getUserInformationExcel() {
+		
+		try {
+			return ExcelHelper.usersToExcel(db.findByRole(Role.USER));
+		} catch (IOException e) {
+			return new byte[0];
+		}
 	}
 	
 	

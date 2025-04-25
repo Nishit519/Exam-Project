@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -103,6 +105,21 @@ public class AdminUserController {
 	  Pageable pageable = PageRequest.of(page, size);
 	  Page<AdminUserProxy> result = userService.getAllUsers(pageable, search);
 	  return ResponseEntity.ok(result);
+	}
+	
+	@GetMapping("/download-user-information-excel")
+	public ResponseEntity<byte[]> getUserInformationExcel() {
+	    
+	    byte[] excel = userService.getUserInformationExcel();
+
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.add("Content-Disposition", "attachment; filename=User-Information.xlsx");
+	    headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+
+	    return ResponseEntity
+	            .ok()
+	            .headers(headers)
+	            .body(excel);
 	}
 	
 }

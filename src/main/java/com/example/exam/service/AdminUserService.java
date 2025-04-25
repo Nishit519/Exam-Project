@@ -22,5 +22,6 @@ public interface AdminUserService {
 	public Boolean addDummyData(Integer count);
 	public Boolean deleteUser(Long id);
 	Page<AdminUserProxy> getAllUsers(Pageable pageable, String search);
+	public byte[] getUserInformationExcel();
 	
 }
